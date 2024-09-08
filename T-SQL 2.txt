@@ -1,0 +1,105 @@
+CREATE TABLE Products (
+    ProductID INT PRIMARY KEY,
+    ProductName NVARCHAR(100),
+    Category NVARCHAR(50),
+    Price DECIMAL(10, 2),
+    StockQuantity INT
+);
+
+
+/*sprawdzamy dostępność produkty
+
+CREATE PROCEDURE CheckProductAvailability
+    @ProductID INT
+AS
+BEGIN
+
+  DECLARE @Stock INT;
+   
+   SELECT @Stock = StockQuantity
+   FROM Products
+   WHERE ProductID = @ProductID;
+
+   IF @Stock > 0
+   BEGIN
+     PRINT 'Produkt dostępny';
+   END
+   ELSE
+   BEGIN
+     PRINT 'Produkt niedostepny';
+   END
+END;
+
+
+/*Aktualizujemy cene produktu wraz z warunkiem*/
+
+
+CREATE PROCEDURE UpdateProductPrice
+   @ProductID INT,
+   @NewPrice DECIMAL(10,2),
+   @Category NVARCHAR(50)
+  
+AS
+BEGIN 
+  IF @Category = 'Electronics' AND @NewPrice >1000
+  BEGIN
+     PRINT 'Cena przekracza limit';
+  END
+  ELSE
+  BEGIN
+     UPDATE Products
+     SET Price = @NewPrice
+     WHERE ProductID = @ProductID;
+     
+     PRINT 'Cena zaktualizowana';
+   END
+END;
+
+
+/*dodajemy nowy produkt z warunkiem*/
+
+
+CREATE PROCEDURE AddNewProduct
+    @ProductName NVARCHAR(100),
+    @Category NVARCHAR(50),
+    @Price DECIMAL(10, 2),
+    @StockQuantity INT
+AS
+BEGIN
+    IF @Category = 'Luxury' AND @Price <= 500
+    BEGIN
+        PRINT 'Cena dla produktów luksusowych musi być większa niż 500';
+    END
+    ELSE IF @Category = 'Budget' AND @Price >= 100
+    BEGIN
+        PRINT 'Cena dla produktów budżetowych musi być mniejsza niż 100';
+    END
+    ELSE
+    BEGIN
+        INSERT INTO Products (ProductName, Category, Price, StockQuantity)
+        VALUES (@ProductName, @Category, @Price, @StockQuantity);
+        
+        PRINT 'Produkt dodany pomyślnie';
+    END
+END;
+
+
+/* transakcje z użyciem TRY, CATCH*/
+
+BEGIN TRY
+    BEGIN TRANSACTION;
+
+    INSERT INTO Orders (CustomerID, OrderDate, TotalAmount)
+    VALUES (1, GETDATE(), 500);
+
+    UPDATE Customers
+    SET Balance = Balance - 500
+    WHERE CustomerID = 1;
+
+    COMMIT TRANSACTION;
+    PRINT 'Transakcja zakończona sukcesem.';
+END TRY
+BEGIN CATCH
+    ROLLBACK TRANSACTION;
+    PRINT 'Wystąpił błąd. Transakcja została wycofana.';
+END CATCH;

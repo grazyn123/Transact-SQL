@@ -1,0 +1,55 @@
+CREATE TABLE Pracownicy (
+    ID INT IDENTITY(1,1) PRIMARY KEY,
+    Imie NVARCHAR(50),
+    Nazwisko NVARCHAR(50),
+    Stanowisko NVARCHAR(50),
+    DataZatrudnienia DATE
+);
+
+
+INSERT INTO Pracownicy (Imie, Nazwisko, Stanowisko, DataZatrudnienia) VALUES
+('Anna', 'Kowalska', 'Analityk', '2018-03-15'),
+('Krzysztof', 'Nowak', 'Programista', '2019-06-23'),
+('Marta', 'Zięba', 'HR', '2017-12-01');
+
+
+Procedura składowa, która zwraca liczbę pracowników
+
+CREATE PROCEDURE LiczbaPracownikow
+   @Stanowisko NVARCHAR(50)
+AS
+BEGIN
+
+ SELECT COUNT(*) AS LiczbaPracownikow FROM Pracownicy WHERE Stanowisko = @Stanowisko;
+
+END;
+
+Procedura składowa, która dodaje nowego pracownika
+
+CREATE PROCEDURE DodajPracownika
+    @Imie NVARCHAR(50),
+    @Nazwisko NVARCHAR(50),
+    @Stanowisko NVARCHAR(50),
+    @DataZatrudnienia DATE
+AS
+BEGIN
+    INSERT INTO Pracownicy (Imie, Nazwisko, Stanowisko, DataZatrudnienia)
+    VALUES (@Imie, @Nazwisko, @Stanowisko, @DataZatrudnienia);
+END;
+
+
+Procedura składowa ,która aktualizuje nowego pracownika
+
+CREATE PROCEDURE AktualizacjaPracownika
+   @ID INT,
+   @NoweStanowisko NVARCHAR(50),
+    @NowaDataZatrudnienia DATE
+AS
+BEGIN
+  UPDATE Pracownicy 
+  SET Stanowisko = @NoweStanowisko, DataZatrudnienia = @NowaDataZatrudnienia
+  WHERE ID = @ID;
+
+
+
+END;
