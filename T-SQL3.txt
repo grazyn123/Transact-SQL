@@ -1,0 +1,48 @@
+CREATE TABLE Employees (
+    EmployeeID INT IDENTITY(1,1) PRIMARY KEY,
+    FirstName NVARCHAR(50) NOT NULL,
+    LastName NVARCHAR(50) NOT NULL,
+    Position NVARCHAR(100),
+    Salary DECIMAL(10, 2),
+    HireDate DATE,
+    DepartmentID INT
+);
+
+Dodajemy pracowników:
+
+INSERT INTO Employees (FirstName, LastName, Position, Salary, HireDate, DepartmentID) VALUES
+('Anna', 'Kowalska', 'Manager', 8000.00, '2018-05-15', 1),
+('Jan', 'Byk', 'Developer', 6000.00, '2019-03-22', 2),
+('Maria', 'Wiśniewska', 'HR Specialist', 5000.00, '2020-01-10', 1),
+('Tomasz', 'Jaworski', 'Developer', 6000.00, '2019-07-30', 2),
+('Anna', 'Wójcik', 'Accountant', 5500.00, '2021-06-01', 3);
+
+*/Liczymy kto zarabia najwięcej*/
+
+SELECT TOP 1 FirstName, LastName, Salary
+FROM Employees
+ORDER BY Salary DESC;
+
+*/Liczymy średnią pensje w dziale*/
+
+SELECT DepartmentID, AVG(Salary) AS AverageSalary
+FROM Employees
+GROUP BY DepartmentID;
+
+*/Szukamy pracowników, którzy zarabiają więcej niż średnia pensja w firmie*/
+
+SELECT FirstName, LastName, Salary
+FROM Employees
+WHERE Salary > (SELECT AVG(Salary) FROM Employees);
+
+*/Szukamy pracowników, którzy pracują w dziale 2 i zarabiają więcej niż 5000
+
+SELECT FirstName, LastName, Salary
+FROM Employees
+WHERE DepartmentID = 2 AND Salary > 5000;
+
+*/Zwiększamy pensję pracowników o 5%, pod warunkiem że pracują przed 1 stycznia 2019 roku*/
+
+UPDATE Employees
+SET Salary = Salary * 1.05
+WHERE HireDate < '2019-01-01';
